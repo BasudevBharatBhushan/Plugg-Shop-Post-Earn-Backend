@@ -4,7 +4,7 @@ const cors = require("cors");
 const passportSetup = require("./passport");
 const passport = require("passport");
 const authRoute = require("./routes/auth");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const mongoose = require("mongoose");
 const app = express();
 app.use(
   cookieSession({ name: "session", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
@@ -12,32 +12,6 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-const uri =
-  "mongodb+srv://admin-basudev:OoAkYrt6dz3DGZQF@cluster0.nbsww.mongodb.net/?retryWrites=true&w=majority";
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("instauser").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
-}
-run().catch(console.dir);
 
 app.use(
   cors({
@@ -48,8 +22,8 @@ app.use(
 );
 
 mongoose
-  .connect(process.env.DATABASE, {
-    userNewUrlParser: true,
+  .connect("mongodb://localhost:27017/plugg-shop-post-earn", {
+    useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
   })
