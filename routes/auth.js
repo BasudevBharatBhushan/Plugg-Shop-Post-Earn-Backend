@@ -5,7 +5,7 @@ const InstagramStrategy = require("passport-instagram").Strategy;
 INSTAGRAM_CLIENT_ID = "1324208351471430";
 INSTAGRAM_CLIENT_SECRET = "cb1bbe0a5928e2f22d69abb49017ae37";
 
-const CLIENT_URL = "https://www.google.com";
+const CLIENT_URL = "http://localhost:3000/";
 
 router.get("/login/success", (req, res) => {
   if (req.user) {
