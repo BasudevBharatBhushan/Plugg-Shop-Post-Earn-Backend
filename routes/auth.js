@@ -4,6 +4,7 @@ const passport = require("passport");
 const InstagramStrategy = require("passport-instagram").Strategy;
 INSTAGRAM_CLIENT_ID = "1324208351471430";
 INSTAGRAM_CLIENT_SECRET = "cb1bbe0a5928e2f22d69abb49017ae37";
+const User = require("../models/users");
 
 const CLIENT_URL = "http://localhost:3000/";
 
@@ -51,14 +52,21 @@ passport.use(
         "https://plugg-shop-post-earn-backend.onrender.com/auth/instagram/callback",
     },
     function (accessToken, refreshToken, profile, done) {
-      console.log("The code reached here");
-
-      // fs.writeFile("profiles.json", JSON.stringify(profile), function (err) {
-      //   if (err) throw err;
-      //   console.log("Profile data saved to file");
-      // });
-
-      return done(null, profile);
+      // Save the access token and profile data to the database
+      User.findOneAndUpdate(
+        { instagramId: profile.id },
+        {
+          accessToken: accessToken,
+          profile: profile,
+        },
+        { upsert: true },
+        function (err, user) {
+          if (err) {
+            return done(err);
+          }
+          return done(null, user);
+        }
+      );
     }
   )
 );
@@ -71,9 +79,18 @@ router.get(
   })
 );
 
-router.get("/instagram/callback", (req, res) => {
-  console.log("code reached here atleast");
-  res.redirect(CLIENT_URL);
-});
+router.get(
+  "/instagram/callback",
+  passport.authenticate("instagram"),
+  function (req, res) {
+    const accessToken = req.user.accessToken;
+    const userProfile = req.user.profile;
+    // Send the access token and profile data as a response
+    res.send({
+      accessToken: accessToken,
+      userProfile: userProfile,
+    });
+  }
+);
 
 module.exports = router;
