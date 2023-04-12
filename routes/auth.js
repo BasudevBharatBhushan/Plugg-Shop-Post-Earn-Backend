@@ -5,7 +5,7 @@ const InstagramStrategy = require("passport-instagram").Strategy;
 INSTAGRAM_CLIENT_ID = "1324208351471430";
 INSTAGRAM_CLIENT_SECRET = "cb1bbe0a5928e2f22d69abb49017ae37";
 
-const CLIENT_URL = "http://localhost:3000/";
+// const CLIENT_URL = "http://localhost:3000/";
 
 router.get("/login/success", (req, res) => {
   if (req.user) {
@@ -18,6 +18,10 @@ router.get("/login/success", (req, res) => {
   }
 });
 
+router.get("/", (req, res) => {
+  console.log("auth");
+});
+
 router.get("/login/failed", (req, res) => {
   res.status(401).json({
     success: false,
@@ -25,10 +29,10 @@ router.get("/login/failed", (req, res) => {
   });
 });
 
-router.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect(CLIENT_URL);
-});
+// router.get("/logout", (req, res) => {
+//   req.logout();
+//   res.redirect(CLIENT_URL);
+// });
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -47,6 +51,7 @@ passport.use(
         "https://plugg-shop-post-earn-backend.onrender.com/auth/instagram/callback",
     },
     function (accessToken, refreshToken, profile, done) {
+      console.log("The code reached here");
       // Save profile data to file
       fs.writeFile("profiles.json", JSON.stringify(profile), function (err) {
         if (err) throw err;
@@ -67,16 +72,13 @@ router.get(
   })
 );
 
-router.get(
-  "/instagram/callback",
-  // passport.authenticate("instagram", { failureRedirect: "/login" }),
-  function (req, res) {
-    res.redirect(CLIENT_URL);
-  }
-);
-
-// router.get("/instagram/callback", (req, res) => {
-//   res.send("callback working");
-// });
+// router.get(
+//   "/instagram/callback",
+//   passport.authenticate("instagram", { failureRedirect: "/login" }),
+//   (req, res) => {
+//     console.log("code reached here atleast");
+//     // res.redirect(CLIENT_URL);
+//   }
+// );
 
 module.exports = router;
