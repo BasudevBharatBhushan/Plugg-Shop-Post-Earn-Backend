@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const fs = require("fs");
 const passport = require("passport");
 const InstagramStrategy = require("passport-instagram").Strategy;
 INSTAGRAM_CLIENT_ID = "1324208351471430";
@@ -43,13 +44,16 @@ passport.use(
       clientID: INSTAGRAM_CLIENT_ID,
       clientSecret: INSTAGRAM_CLIENT_SECRET,
       callbackURL:
-        "https://plugg-shop-post-earn-backend.onrender.com/auth/instagram/callback", // Make sure this matches your route
-      passReqToCallback: true, // Add this option to pass the request object to the callback
+        "https://plugg-shop-post-earn-backend.onrender.com/auth/instagram/callback",
     },
-    (req, accessToken, refreshToken, profile, done) => {
-      console.log("Instagram authentication successful"); // Add console log
-      console.log("Profile:", profile); // Add console log
-      // Your authentication logic here
+    function (accessToken, refreshToken, profile, done) {
+      // Save profile data to file
+      fs.writeFile("profiles.json", JSON.stringify(profile), function (err) {
+        if (err) throw err;
+        console.log("Profile data saved to file");
+      });
+
+      // Return the profile to serializeUser
       return done(null, profile);
     }
   )
