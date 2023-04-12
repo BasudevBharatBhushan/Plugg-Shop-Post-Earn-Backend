@@ -71,13 +71,9 @@ router.get(
   })
 );
 
-router.get(
-  "/instagram/callback",
-  passport.authenticate("instagram", { failureRedirect: "/login" }),
-  (req, res) => {
-    console.log("code reached here atleast");
-    res.redirect(CLIENT_URL);
-  }
-);
+router.get("/instagram/callback", (req, res) => {
+  console.log("code reached here atleast");
+  res.redirect(CLIENT_URL);
+});
 
 module.exports = router;
