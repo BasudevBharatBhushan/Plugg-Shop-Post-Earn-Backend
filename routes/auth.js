@@ -55,7 +55,10 @@ passport.use(
   )
 );
 
-router.get("/instagram", passport.authenticate("instagram"));
+router.get(
+  "/instagram",
+  passport.authenticate("instagram", { scope: ["user_profile", "user_media"] })
+);
 
 router.get(
   "/auth/instagram/callback",
