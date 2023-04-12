@@ -64,7 +64,32 @@ passport.use(
           if (err) {
             return done(err);
           }
-          return done(null, user);
+          // Add the following code to fetch additional user profile data
+          this._oauth2.get(
+            "https://graph.instagram.com/me?fields=id,username",
+            accessToken,
+            function (err, body, res) {
+              if (err) {
+                return done(
+                  new InternalOAuthError("failed to fetch user profile", err)
+                );
+              }
+              try {
+                var json = JSON.parse(body);
+
+                var profile = { provider: "instagram" };
+                profile.id = json.id;
+                profile.username = json.username;
+
+                profile._raw = body;
+                profile._json = json;
+
+                done(null, profile);
+              } catch (e) {
+                done(e);
+              }
+            }
+          );
         }
       );
     }
