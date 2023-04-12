@@ -23,6 +23,10 @@ app.use(
 
 app.use("/auth", authRoute);
 
+app.get("/", (req, res) => {
+  res.send("Plugg Shop Post and Earn Server is working");
+});
+
 app.listen("5000", () => {
   console.log("Server is running!");
 });

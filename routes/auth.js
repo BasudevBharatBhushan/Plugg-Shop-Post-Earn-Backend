@@ -1,5 +1,8 @@
 const router = require("express").Router();
 const passport = require("passport");
+const InstagramStrategy = require("passport-instagram").Strategy;
+INSTAGRAM_CLIENT_ID = "1324208351471430";
+INSTAGRAM_CLIENT_SECRET = "cb1bbe0a5928e2f22d69abb49017ae37";
 
 const CLIENT_URL = "http://localhost:3000/";
 
@@ -57,6 +60,22 @@ router.get(
     successRedirect: CLIENT_URL,
     failureRedirect: "/login/failed",
   })
+);
+
+passport.use(
+  new InstagramStrategy(
+    {
+      clientID: INSTAGRAM_CLIENT_ID,
+      clientSecret: INSTAGRAM_CLIENT_SECRET,
+      callbackURL: "/auth/instagram/callback", // Make sure this matches your route
+      passReqToCallback: true, // Add this option to pass the request object to the callback
+    },
+    (req, accessToken, refreshToken, profile, done) => {
+      console.log("Instagram authentication successful"); // Add console log
+      console.log("Profile:", profile); // Add console log
+      // Your authentication logic here
+    }
+  )
 );
 
 router.get("/instagram", passport.authenticate("instagram"));
