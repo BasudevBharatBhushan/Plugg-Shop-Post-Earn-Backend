@@ -52,13 +52,12 @@ passport.use(
     },
     function (accessToken, refreshToken, profile, done) {
       console.log("The code reached here");
-      // Save profile data to file
-      fs.writeFile("profiles.json", JSON.stringify(profile), function (err) {
-        if (err) throw err;
-        console.log("Profile data saved to file");
-      });
 
-      // Return the profile to serializeUser
+      // fs.writeFile("profiles.json", JSON.stringify(profile), function (err) {
+      //   if (err) throw err;
+      //   console.log("Profile data saved to file");
+      // });
+
       return done(null, profile);
     }
   )
