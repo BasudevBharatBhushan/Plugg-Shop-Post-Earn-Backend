@@ -57,14 +57,17 @@ passport.use(
 
 router.get(
   "/instagram",
-  passport.authenticate("instagram", { scope: ["user_profile", "user_media"] })
+  passport.authenticate("instagram", {
+    scope: ["user_profile", "user_media"],
+    response_type: "code",
+  })
 );
 
 router.get(
   "/auth/instagram/callback",
   passport.authenticate("instagram", { failureRedirect: "/login" }),
   function (req, res) {
-    res.send("Instagram authentication successful");
+    res.redirect(CLIENT_URL);
   }
 );
 
