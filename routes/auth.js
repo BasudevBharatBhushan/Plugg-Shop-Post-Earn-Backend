@@ -68,11 +68,15 @@ router.get(
 );
 
 router.get(
-  "/auth/instagram/callback",
+  "/instagram/callback",
   // passport.authenticate("instagram", { failureRedirect: "/login" }),
   function (req, res) {
     res.redirect(CLIENT_URL);
   }
 );
+
+// router.get("/instagram/callback", (req, res) => {
+//   res.send("callback working");
+// });
 
 module.exports = router;
