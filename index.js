@@ -22,11 +22,13 @@ app.use(
 );
 
 mongoose
-  .connect("mongodb://localhost:27017/plugg-shop-post-earn", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-  })
+  .connect(
+    "mongodb+srv://admin-basudev:OoAkYrt6dz3DGZQF@cluster0.nbsww.mongodb.net/InstaDB",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     console.log("DB CONNECTED");
   });
