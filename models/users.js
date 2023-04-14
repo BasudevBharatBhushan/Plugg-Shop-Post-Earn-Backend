@@ -2,20 +2,16 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  name: {
+  user_id: {
     type: String,
     required: true,
   },
-  accessToken: {
+  username: {
     type: String,
     required: true,
   },
-  refreshToken: {
+  access_token: {
     type: String,
-    required: true,
-  },
-  profile: {
-    type: Object,
     required: true,
   },
 });
