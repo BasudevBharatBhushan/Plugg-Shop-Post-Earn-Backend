@@ -54,18 +54,23 @@ router.get("/instagram/callback", async (req, res) => {
       username: username,
       access_token: 123456,
     });
-    res.send(newUser);
-    // newUser.save((err, savedUser) => {
-    //   if (err) {
-    //     console.error(err);
-    //     res
-    //       .status(500)
-    //       .send("Error in registering user, please try again later.");
-    //   } else {
-    //     console.log("Saved user:", savedUser);
-    //     res.send("User registered successfully!");
-    //   }
-    // });
+
+    newUser.save((err, savedUser) => {
+      if (err) {
+        console.error(err);
+        res
+          .status(500)
+          .send("Error in registering user, please try again later.");
+      }
+
+      console.log("Saved user:", savedUser);
+      res.json({
+        id: savedUser._id,
+        user_id: savedUser.user_id,
+        username: savedUser.username,
+        access_token: savedUser.access_token,
+      });
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error");
