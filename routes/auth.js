@@ -40,12 +40,11 @@ router.get("/instagram/callback", async (req, res) => {
     );
     const access_token = tokenResponse.data.access_token;
 
-    res.send(access_token);
-
     // Retrieve user information
-    // const meUrl = `https://graph.instagram.com/me?fields=id,username&access_token=${access_token}`;
-    // const meResponse = await axios.get(meUrl);
-    // const user_data = meResponse.data;
+    const meUrl = `https://graph.instagram.com/me?fields=id,username&access_token=${access_token}`;
+    const meResponse = await axios.get(meUrl);
+    const user_data = meResponse.data;
+    res.send(user_data);
     // const user_id = user_data.id;
     // const username = user_data.username;
 
