@@ -26,7 +26,8 @@ router.get("/instagram", (req, res) => {
 router.get("/instagram/callback", async (req, res) => {
   const code = req.query.code.replace("#_", ""); // remove #_ from code
   try {
-    res.redirect("/");
+    const str = "Hello, world! callback";
+    res.send(str);
     // Exchange authorization code for access token
     // const tokenParams = {
     //   client_id: CLIENT_ID,
