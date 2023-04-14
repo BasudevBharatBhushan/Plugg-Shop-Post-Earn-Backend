@@ -48,23 +48,25 @@ router.get("/instagram/callback", async (req, res) => {
     const user_id = user_data.id;
     const username = user_data.username;
 
+    res.send(user_id + " " + username + " " + access_token);
+
     // Store user information in MongoDB
-    const newUser = new User({
-      user_id: user_id,
-      username: username,
-      access_token: access_token,
-    });
-    newUser.save((err, savedUser) => {
-      if (err) {
-        console.error(err);
-        res
-          .status(500)
-          .send("Error in registering user, please try again later.");
-      } else {
-        console.log("Saved user:", savedUser);
-        res.send("User registered successfully!");
-      }
-    });
+    // const newUser = new User({
+    //   user_id: user_id,
+    //   username: username,
+    //   access_token: access_token,
+    // });
+    // newUser.save((err, savedUser) => {
+    //   if (err) {
+    //     console.error(err);
+    //     res
+    //       .status(500)
+    //       .send("Error in registering user, please try again later.");
+    //   } else {
+    //     console.log("Saved user:", savedUser);
+    //     res.send("User registered successfully!");
+    //   }
+    // });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error");
