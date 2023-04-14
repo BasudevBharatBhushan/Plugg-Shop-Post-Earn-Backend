@@ -1,111 +1,82 @@
-const router = require("express").Router();
-const fs = require("fs");
-const passport = require("passport");
-const InstagramStrategy = require("passport-instagram").Strategy;
+const express = require("express");
 INSTAGRAM_CLIENT_ID = "1324208351471430";
 INSTAGRAM_CLIENT_SECRET = "cb1bbe0a5928e2f22d69abb49017ae37";
 const User = require("../models/users");
+const querystring = require("querystring");
 
-const CLIENT_URL = "http://localhost:3000/";
+const router = express.Router();
+// const CLIENT_URL = "http://localhost:3000/";
 
-router.get("/login/success", (req, res) => {
-  if (req.user) {
-    res.status(200).json({
-      success: true,
-      message: "successfull",
-      user: req.user,
-      //   cookies: req.cookies
+const CLIENT_ID = "1324208351471430";
+const CLIENT_SECRET = "cb1bbe0a5928e2f22d69abb49017ae37";
+const REDIRECT_URI =
+  "https://plugg-shop-post-earn-backend.onrender.com/auth/instagram/callback";
+const AUTH_URL = "https://api.instagram.com/oauth/authorize";
+const TOKEN_URL = "https://api.instagram.com/oauth/access_token";
+
+// Step 1: Redirect user to Instagram authentication page
+router.get("/instagram", (req, res) => {
+  const authParams = {
+    client_id: CLIENT_ID,
+    redirect_uri: REDIRECT_URI,
+    scope: "user_profile,user_media",
+    response_type: "code",
+  };
+  const authUrl = `${AUTH_URL}?${querystring.stringify(authParams)}`;
+  res.redirect(authUrl);
+});
+
+// Step 2: Exchange authorization code for access token
+router.get("/instagram/callback", async (req, res) => {
+  const code = req.query.code;
+  const tokenParams = {
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+    grant_type: "authorization_code",
+    redirect_uri: REDIRECT_URI,
+    code: code,
+  };
+  try {
+    const tokenResponse = await axios.post(
+      TOKEN_URL,
+      querystring.stringify(tokenParams)
+    );
+    const access_token = tokenResponse.data.access_token;
+
+    // Step 3: Retrieve user information
+    const meUrl = `https://graph.instagram.com/me?fields=id,username&access_token=${access_token}`;
+    const meResponse = await axios.get(meUrl);
+    const user_data = meResponse.data;
+    const user_id = user_data.id;
+    const username = user_data.username;
+
+    // Store user information in MongoDB
+
+    const newUser = new User({
+      user_id: user_id,
+      username: username,
+      access_token: access_token,
     });
+
+    newUser.save((err, savedUser) => {
+      if (err) {
+        console.error(err);
+        res
+          .status(500)
+          .send("Error in registering user, please try again later.");
+      } else {
+        console.log("Saved user:", savedUser);
+        res.redirect("/");
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
   }
 });
 
 router.get("/", (req, res) => {
-  console.log("auth");
+  res.send("<h1>Hello, world!</h1>");
 });
-
-router.get("/login/failed", (req, res) => {
-  res.status(401).json({
-    success: false,
-    message: "failure",
-  });
-});
-
-router.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect(CLIENT_URL);
-});
-
-passport.serializeUser(function (user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function (obj, done) {
-  done(null, obj);
-});
-
-passport.use(
-  new InstagramStrategy(
-    {
-      clientID: INSTAGRAM_CLIENT_ID,
-      clientSecret: INSTAGRAM_CLIENT_SECRET,
-      callbackURL:
-        "https://plugg-shop-post-earn-backend.onrender.com/auth/instagram/callback",
-    },
-    function (accessToken, refreshToken, profile, done) {
-      // Save the access token and profile data to the database
-      User.findOneAndUpdate(
-        { instagramId: profile.id },
-        {
-          accessToken: accessToken,
-          profile: profile,
-        },
-        { upsert: true },
-        function (err, user) {
-          if (err) {
-            return done(err);
-          }
-          // Fetch additional user profile data
-          const url =
-            "https://graph.instagram.com/me?fields=id,username&access_token=" +
-            accessToken;
-          fetch(url)
-            .then((res) => res.json())
-            .then((json) => {
-              profile.id = json.id;
-              profile.username = json.username;
-              profile._raw = JSON.stringify(json);
-              profile._json = json;
-              done(null, profile);
-            })
-            .catch((err) => {
-              done(err);
-            });
-        }
-      );
-    }
-  )
-);
-
-router.get(
-  "/instagram",
-  passport.authenticate("instagram", {
-    scope: ["user_profile", "user_media"],
-    response_type: "code",
-  })
-);
-
-router.get(
-  "/instagram/callback",
-  passport.authenticate("instagram"),
-  function (req, res) {
-    const accessToken = req.user.accessToken;
-    const userProfile = req.user.profile;
-    // Send the access token and profile data as a response
-    res.send({
-      accessToken: accessToken,
-      userProfile: userProfile,
-    });
-  }
-);
 
 module.exports = router;
