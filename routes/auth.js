@@ -5,8 +5,8 @@ const querystring = require("querystring");
 
 const router = express.Router();
 
-const CLIENT_ID = "your_client_id_here";
-const CLIENT_SECRET = "your_client_secret_here";
+const CLIENT_ID = "1324208351471430";
+const CLIENT_SECRET = "cb1bbe0a5928e2f22d69abb49017ae37";
 const REDIRECT_URI =
   "https://plugg-shop-post-earn-backend.onrender.com/auth/instagram/callback";
 const AUTH_URL = "https://api.instagram.com/oauth/authorize";
