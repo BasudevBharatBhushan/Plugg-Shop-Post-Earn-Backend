@@ -1,20 +1,17 @@
 const express = require("express");
-INSTAGRAM_CLIENT_ID = "1324208351471430";
-INSTAGRAM_CLIENT_SECRET = "cb1bbe0a5928e2f22d69abb49017ae37";
+const axios = require("axios");
 const User = require("../models/users");
 const querystring = require("querystring");
 
 const router = express.Router();
-// const CLIENT_URL = "http://localhost:3000/";
 
-const CLIENT_ID = "1324208351471430";
-const CLIENT_SECRET = "cb1bbe0a5928e2f22d69abb49017ae37";
+const CLIENT_ID = "your_client_id_here";
+const CLIENT_SECRET = "your_client_secret_here";
 const REDIRECT_URI =
   "https://plugg-shop-post-earn-backend.onrender.com/auth/instagram/callback";
 const AUTH_URL = "https://api.instagram.com/oauth/authorize";
 const TOKEN_URL = "https://api.instagram.com/oauth/access_token";
 
-// Step 1: Redirect user to Instagram authentication page
 router.get("/instagram", (req, res) => {
   const authParams = {
     client_id: CLIENT_ID,
@@ -26,24 +23,24 @@ router.get("/instagram", (req, res) => {
   res.redirect(authUrl);
 });
 
-// Step 2: Exchange authorization code for access token
 router.get("/instagram/callback", async (req, res) => {
   const code = req.query.code;
-  const tokenParams = {
-    client_id: CLIENT_ID,
-    client_secret: CLIENT_SECRET,
-    grant_type: "authorization_code",
-    redirect_uri: REDIRECT_URI,
-    code: code,
-  };
   try {
+    // Exchange authorization code for access token
+    const tokenParams = {
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      grant_type: "authorization_code",
+      redirect_uri: REDIRECT_URI,
+      code: code,
+    };
     const tokenResponse = await axios.post(
       TOKEN_URL,
       querystring.stringify(tokenParams)
     );
     const access_token = tokenResponse.data.access_token;
 
-    // Step 3: Retrieve user information
+    // Retrieve user information
     const meUrl = `https://graph.instagram.com/me?fields=id,username&access_token=${access_token}`;
     const meResponse = await axios.get(meUrl);
     const user_data = meResponse.data;
@@ -51,13 +48,11 @@ router.get("/instagram/callback", async (req, res) => {
     const username = user_data.username;
 
     // Store user information in MongoDB
-
     const newUser = new User({
       user_id: user_id,
       username: username,
       access_token: access_token,
     });
-
     newUser.save((err, savedUser) => {
       if (err) {
         console.error(err);
