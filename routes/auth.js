@@ -48,7 +48,7 @@ router.get("/instagram/callback", async (req, res) => {
     const user_id = user_data.id;
     const username = user_data.username;
 
-    res.send(user_id + " " + username + " " + access_token);
+    res.send(user_data);
 
     // Store user information in MongoDB
     // const newUser = new User({
