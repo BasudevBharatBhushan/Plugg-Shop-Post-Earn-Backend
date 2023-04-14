@@ -52,7 +52,7 @@ router.get("/instagram/callback", async (req, res) => {
     const newUser = new User({
       user_id: user_id,
       username: username,
-      access_token: access_token,
+      access_token: 123456,
     });
     res.send(newUser);
     // newUser.save((err, savedUser) => {
