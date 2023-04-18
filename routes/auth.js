@@ -48,6 +48,8 @@ router.get("/instagram/callback", async (req, res) => {
     const user_id = user_data.id;
     const username = user_data.username;
 
+    res.cookie("token", access_token, { expire: new Date() + 9999 });
+
     //Find user in DB
     User.findOne({ user_id: user_id }).then((user) => {
       if (user) {

@@ -1,7 +1,9 @@
 const express = require("express");
-const cors = require("cors");
 const authRoute = require("./routes/auth");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const app = express();
 
 app.use(cors());
@@ -17,6 +19,11 @@ mongoose
   .then(() => {
     console.log("DB CONNECTED");
   });
+
+//Middlewares
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(cors());
 
 app.use("/auth", authRoute);
 
