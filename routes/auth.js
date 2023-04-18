@@ -5,8 +5,8 @@ const querystring = require("querystring");
 
 const router = express.Router();
 
-const CLIENT_ID = "1324208351471430";
-const CLIENT_SECRET = "cb1bbe0a5928e2f22d69abb49017ae37";
+const CLIENT_ID = "555929540008429";
+const CLIENT_SECRET = "597c05f76db7c66b1c07d8fa00b396dd";
 const REDIRECT_URI =
   "https://plugg-shop-post-earn-backend.onrender.com/auth/instagram/callback";
 const AUTH_URL = "https://api.instagram.com/oauth/authorize";
@@ -73,10 +73,12 @@ router.get("/instagram/callback", async (req, res) => {
           .then((user) => {
             // User saved successfully, return the user data
             res.json({
-              id: user._id,
-              user_id: user.user_id,
-              username: user.username,
-              access_token: user.access_token,
+              token: access_token,
+              user: {
+                id: user._id,
+                user_id: user.user_id,
+                username: user.username,
+              },
             });
           })
           .catch((err) => {
