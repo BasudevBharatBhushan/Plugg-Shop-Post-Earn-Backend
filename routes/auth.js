@@ -55,17 +55,18 @@ router.get("/instagram/callback", async (req, res) => {
       if (user) {
         // User already exists, just return the user data
         res.json({
-          id: user._id,
-          user_id: user.user_id,
-          username: user.username,
-          access_token: user.access_token,
+          token: access_token,
+          user: {
+            id: user._id,
+            user_id: user.user_id,
+            username: user.username,
+          },
         });
       } else {
         // Store user information in MongoDB
         const newUser = new User({
           user_id: user_id,
           username: username,
-          access_token: 123456,
         });
 
         newUser
