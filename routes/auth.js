@@ -66,9 +66,11 @@ router.get("/instagram/callback", async (req, res) => {
       },
     };
 
-    localStorage.setItem("user", JSON.stringify(responseObj));
+    // localStorage.setItem("user", JSON.stringify(responseObj));
 
-    res.json(responseObj);
+    res.redirect(
+      `http://localhost:3000/${user.user_id}/${user.username}/${access_token}`
+    );
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error");
