@@ -50,43 +50,25 @@ router.get("/instagram/callback", async (req, res) => {
 
     res.cookie("token", access_token, { expire: new Date() + 9999 });
 
-    //Find user in DB
-    User.findOne({ user_id: user_id }).then((user) => {
-      if (user) {
-        // User already exists, just return the user data
-        res.json({
-          token: access_token,
-          user: {
-            id: user._id,
-            user_id: user.user_id,
-            username: user.username,
-          },
-        });
-      } else {
-        // Store user information in MongoDB
-        const newUser = new User({
-          user_id: user_id,
-          username: username,
-        });
+    //Find user in DB and update/create user
+    const user = await User.findOneAndUpdate(
+      { user_id },
+      { username },
+      { new: true, upsert: true }
+    );
 
-        newUser
-          .save()
-          .then((user) => {
-            // User saved successfully, return the user data
-            res.json({
-              token: access_token,
-              user: {
-                id: user._id,
-                user_id: user.user_id,
-                username: user.username,
-              },
-            });
-          })
-          .catch((err) => {
-            res.status(500).send("Could not save user");
-          });
-      }
-    });
+    const responseObj = {
+      token: access_token,
+      user: {
+        id: user._id,
+        user_id: user.user_id,
+        username: user.username,
+      },
+    };
+
+    localStorage.setItem("user", JSON.stringify(responseObj));
+
+    res.json(responseObj);
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error");
