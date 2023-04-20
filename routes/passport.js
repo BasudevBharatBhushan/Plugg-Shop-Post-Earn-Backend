@@ -64,7 +64,7 @@ passport.use(
 router.get(
   "/instagram",
   passport.authenticate("instagram", {
-    scope: ["user_profile", "user_media"],
+    scope: "user_profile , user_media",
     response_type: "code",
   })
 );
