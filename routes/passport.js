@@ -69,6 +69,7 @@ router.get(
     "instagram",
     {
       scope: ["user_profile", "user_media"],
+      response_type: ["code"],
     },
     {
       failureRedirect: "/auth/failed",
