@@ -66,9 +66,11 @@ router.get("/instagram", passport.authenticate("instagram"));
 router.get(
   "/instagram/callback",
   passport.authenticate("instagram", {
-    successRedirect: "https://plugg-shop-post-earn.onrender.com",
     failureRedirect: "/auth/failed",
-  })
+  }),
+  function (req, res) {
+    res.redirect("https://plugg-shop-post-earn.onrender.com");
+  }
 );
 
 router.get("/failed", (req, res) => {
