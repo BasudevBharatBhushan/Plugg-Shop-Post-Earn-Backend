@@ -68,7 +68,7 @@ router.get(
   passport.authenticate(
     "instagram",
     {
-      scope: ["profile"],
+      scope: ["user_profile", "user_media"],
     },
     {
       failureRedirect: "/auth/failed",
